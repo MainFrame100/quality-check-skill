@@ -132,7 +132,7 @@ Good Quality Check output is not polite reassurance.
 
 It should produce one of these:
 
-- `OK` - the artifact is usable with named limitations;
+- `Ready as-is` - the artifact is usable with named limitations;
 - `Needs revision` - useful, but specific issues must be fixed;
 - `STOP` - do not use this as a final artifact;
 - `BLOCKED` - required sources or context are missing.
@@ -151,4 +151,3 @@ For long artifacts:
 4. do not ask the model to verify more source material than it can hold in context.
 
 If the model cannot point to a source in 30 seconds, treat the claim as unsupported until proven otherwise.
-

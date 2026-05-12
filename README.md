@@ -1,5 +1,12 @@
 # Quality Check Skill
 
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by/4.0/)
+[![Skill: validated](https://img.shields.io/badge/skill-validated-brightgreen.svg)](VALIDATION.md)
+[![Package: .skill](https://img.shields.io/badge/package-.skill-blue.svg)](quality-check.skill)
+[![Languages: EN/RU](https://img.shields.io/badge/languages-EN%20%7C%20RU-orange.svg)](README.ru.md)
+
+**English** | [Русский](README.ru.md)
+
 Public version of an agent skill for checking long AI-generated artifacts before you trust or share them.
 
 It is useful when an AI agent has assembled a report, brief, research summary, specification, strategy, transcript digest, or any other document based on multiple sources.
@@ -7,6 +14,14 @@ It is useful when an AI agent has assembled a report, brief, research summary, s
 The skill does not make the model "always correct". It makes the model slow down, list assumptions, verify claims against sources, and clearly say what is ready to use and what is not.
 
 Last Updated: 2026-05-12
+
+## Author And License
+
+Author: **Dmitrii Yuzhanin**  
+Source: https://github.com/MainFrame100/quality-check-skill  
+License: **CC BY 4.0**
+
+You may share and adapt this skill, including commercially, but you must keep attribution to Dmitrii Yuzhanin and link to the original repository.
 
 ## What It Helps With
 
@@ -30,11 +45,14 @@ Different model families often catch different mistakes.
 
 Use either the ready package or the source folder.
 
-Option 1: install the ready package if your agent runtime supports `.skill` files:
+Option 1: download the ready package if your agent runtime supports `.skill` files:
 
 ```bash
-quality-check.skill
+curl -L -o quality-check.skill \
+  https://github.com/MainFrame100/quality-check-skill/raw/main/quality-check.skill
 ```
+
+Then import `quality-check.skill` using your agent runtime's skill import flow.
 
 Option 2: copy the source folder into your agent skills directory:
 
@@ -45,6 +63,16 @@ cp -R quality-check ~/.claude/skills/
 ```
 
 Use the equivalent skills directory for your own agent runtime if it differs.
+
+## How To Update
+
+The canonical source is this repository:
+
+```text
+https://github.com/MainFrame100/quality-check-skill
+```
+
+When you adapt the skill, keep the `metadata.author`, `metadata.source`, `metadata.version`, and `license` fields in `quality-check/SKILL.md` so future updates can be traced.
 
 ## How To Invoke
 
@@ -99,6 +127,9 @@ For very large documents, do not check everything in one pass. Split the artifac
 - `quality-check.skill` - ready-to-share packaged skill file.
 - `quality-check/SKILL.md` - the actual skill file.
 - `LOGIC.md` - explanation of the checks, why they exist, and how to interpret the output.
+- `README.ru.md` - Russian documentation.
+- `ATTRIBUTION.md` - recommended attribution text.
+- `VALIDATION.md` - validation report for the packaged skill.
 
 ## Suggested Output Standard
 

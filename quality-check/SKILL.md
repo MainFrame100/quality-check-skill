@@ -1,17 +1,23 @@
 ---
 name: quality-check
+license: "CC-BY-4.0"
+metadata:
+  version: "1.0.0"
+  author: "Dmitrii Yuzhanin"
+  source: "https://github.com/MainFrame100/quality-check-skill"
 description: >
-  Structured quality review for AI-generated artifacts with source verification,
-  gap detection, context-drift checks, and D/L/C/P scoring. Use when the user
-  asks to check quality, find errors, verify facts, review sources, validate a
-  report, inspect a long answer, or decide whether an artifact can be used
-  as-is. Best invoked explicitly with /quality-check, "check quality",
-  "find errors", "verify facts", or "can I use this as-is?". Do NOT use for
-  simple one-file edits, routine formatting, or casual conversation without an
-  artifact.
+  Structured quality review for AI-generated artifacts before they are trusted
+  or shared. Use when the user asks to check quality, find errors, verify facts,
+  review sources, validate a report, inspect a long answer, or decide whether an
+  artifact can be used as-is. Do NOT use for simple one-file edits, routine
+  formatting, or casual conversation without an artifact.
 ---
 
 # Quality Check
+
+Author: Dmitrii Yuzhanin  
+Source: https://github.com/MainFrame100/quality-check-skill  
+License: CC BY 4.0. Keep attribution and source link when sharing or adapting.
 
 Use this skill to review an AI-generated artifact before the user trusts it, shares it, or builds on it.
 
@@ -258,4 +264,3 @@ Return a concise report:
 ## Next Fixes
 [ordered list of concrete fixes]
 ```
-

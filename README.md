@@ -28,7 +28,15 @@ Different model families often catch different mistakes.
 
 ## How To Install
 
-Copy the `quality-check/` folder into your agent skills directory.
+Use either the ready package or the source folder.
+
+Option 1: install the ready package if your agent runtime supports `.skill` files:
+
+```bash
+quality-check.skill
+```
+
+Option 2: copy the source folder into your agent skills directory:
 
 Example:
 
@@ -88,6 +96,7 @@ For very large documents, do not check everything in one pass. Split the artifac
 
 ## Files
 
+- `quality-check.skill` - ready-to-share packaged skill file.
 - `quality-check/SKILL.md` - the actual skill file.
 - `LOGIC.md` - explanation of the checks, why they exist, and how to interpret the output.
 
@@ -98,4 +107,3 @@ A useful Quality Check report should answer three questions:
 1. Can I use this result as-is?
 2. What exactly must be fixed before use?
 3. Which claims were verified against sources, and which were not?
-

@@ -1,6 +1,7 @@
 # Validation
 
-Last Updated: 2026-05-12
+Version: 1.1.0  
+Last Updated: 2026-06-25
 
 Validated with `skill-conductor` package/review checks.
 
@@ -16,10 +17,12 @@ uv run <skill-conductor>/scripts/package_skill.py quality-check .
 
 ## Results
 
+- `eval_skill.py`: 10/10, 0 warnings (9 structural checks passed; body 294 lines, description 364 chars).
 - `quick_validate.py`: passed.
-- `eval_skill.py`: 10/10, no warnings.
 - `package_skill.py`: passed.
-- `quality-check.skill`: contains `quality-check/SKILL.md`.
+- `quality-check.skill`: re-packaged for 1.1.0, contains `quality-check/SKILL.md`.
+
+Note: structural and packaging validation re-run for the 1.1.0 update. The behavioral trigger eval (`run_eval.py`) was not re-run in this revision; the 1.1.0 changes are additive to the verified 1.0.0 methodology and do not alter the description's triggers.
 
 ## Notes
 

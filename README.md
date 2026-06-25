@@ -13,7 +13,8 @@ It is useful when an AI agent has assembled a report, brief, research summary, s
 
 The skill does not make the model "always correct". It makes the model slow down, list assumptions, verify claims against sources, and clearly say what is ready to use and what is not.
 
-Last Updated: 2026-05-12
+Version: 1.1.0  
+Last Updated: 2026-06-25
 
 ## Author And License
 

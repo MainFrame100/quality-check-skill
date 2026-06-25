@@ -2,7 +2,7 @@
 name: quality-check
 license: "CC-BY-4.0"
 metadata:
-  version: "1.0.0"
+  version: "1.1.0"
   author: "Dmitrii Yuzhanin"
   source: "https://github.com/MainFrame100/quality-check-skill"
 description: >
@@ -94,13 +94,17 @@ Scan the whole artifact and classify checkable claims:
 
 - `NUMBER` - counts, amounts, intervals;
 - `PERCENT` - percentages, shares, ratios;
-- `MULTIPLIER` - 2x, 10x, "several times", "much more";
-- `TIMESPAN` - dates, durations, exact periods;
+- `MULTIPLIER (exact)` - 2x, 10x, a stated factor;
+- `MULTIPLIER (rhetorical)` - "several times", "much more", "drastically", "by far". These read as facts but carry no number - they are the blind spot of sampling-based review, so inventory them explicitly;
+- `TIMESPAN (exact)` - dates, durations, exact periods ("3 hours", "since 30.03", "once a quarter");
+- `TIMESPAN (descriptive)` - "already", "long ago", "after the fact". Low information value, usually not verifiable as a point in time;
 - `QUOTE` - direct quotes or attributed wording;
 - `COMPARISON` - better, worse, best, main, most important;
 - `INTENSIFIER` - always, never, everyone, nobody, constantly;
 - `OWNER` - who is responsible for a task, decision, or dependency;
 - `AUTHORSHIP` - sections where the user's own wording or subjective judgment is expected.
+
+For `AUTHORSHIP`, separate two cases. A factual canvas assembled from sources (what happened: dates, numbers, events) is fine even when the agent wrote it. The agent's own wording placed in a subjective section - acknowledgements, personal judgments, decisions, self-corrections, the main lesson, priorities for the next period - where the user's own wording is expected is a substitution: fail it, then rewrite as `[GAP: user's wording]` or remove it.
 
 If the artifact has fewer than five checkable claims, list them directly. Otherwise summarize the inventory by class.
 
@@ -111,12 +115,17 @@ Check 100 percent of:
 - `NUMBER`;
 - `PERCENT`;
 - exact `MULTIPLIER`;
+- rhetorical `MULTIPLIER` (it is the blind spot, so do not sample it);
 - exact `TIMESPAN`;
 - quote attribution;
 - task `OWNER` in team or client work;
 - `AUTHORSHIP` where the user must provide the wording.
 
-Check high-impact `COMPARISON` and `INTENSIFIER` claims. Escalate to 100 percent coverage when the recommendation depends on them.
+Check high-impact `COMPARISON` and `INTENSIFIER` claims. Escalate to 100 percent coverage when the recommendation depends on them. Test: rewrite the claim in neutral form, with the comparative or categorical wording removed - if the recommendation falls apart, the claim is load-bearing and must be verified.
+
+Auto-escalate, regardless of class or "load-bearing" judgment: any claim that appears in the artifact's acceptance criteria, definition of done, section headings, or numbered structural points is checked at 100 percent.
+
+30-second rule: if you cannot name a concrete source and quote within 30 seconds for a `NUMBER`, `PERCENT`, exact `MULTIPLIER`, or exact `TIMESPAN`, mark it `[ADDED]` or `[GAP]` immediately - do not defer it to a sub-agent.
 
 If a number, percentage, multiplier, or exact time span has no source, remove it, soften it, or mark it as `[ADDED]`. Do not present unsupported precision as fact.
 
@@ -130,13 +139,25 @@ For each checked claim, return one of:
 - `[SOURCE UNAVAILABLE]` - source cannot be checked;
 - `[ADDED]` - interpretation or wording added by the agent.
 
-Each tested claim must lead to a binary action:
+Each tested claim must lead to a binary action - keep, rewrite, or remove - mapped from the verdict:
 
-- keep;
-- rewrite;
-- remove.
+- `CONFIRMED` - keep.
+- `CONTRADICTS` - fix it, and note the correction in the report.
+- `NOT FOUND` on an `INTENSIFIER` or `COMPARISON` - rewrite as `[ADDED]` or remove.
+- `NOT FOUND` on a `NUMBER`, `PERCENT`, `MULTIPLIER`, or exact `TIMESPAN` - remove the precision: a number without a source is a hallucination, not a hedge.
 
-Do not use "acceptable with caveat" as a final verdict. If a caveat is needed, rewrite the artifact.
+Do not use "acceptable with caveat" as a final verdict. If a caveat is needed, rewrite the artifact. This applies even to `CONFIRMED` claims whose context is shaky - arithmetically correct is not the same as methodologically sound (for example, a comparison across different contexts or a sample size of one): rewrite without the comparison rather than keeping it with a note.
+
+### 5d. Reporting
+
+In the final report, Source Verification is two lines, not a full dump:
+
+1. Inventory summary by class: "N numbers, 100% checked; M quotes, K checked; W intensifiers, top 5 checked".
+2. A discrepancies-only table: only `CONTRADICTS`, `NOT FOUND`, `SOURCE UNAVAILABLE`, and rewritten `[ADDED]` rows. Do not list `CONFIRMED` claims - they would bury the report.
+
+If the inventory exceeds 40 claims, report the first 30 plus a per-class summary.
+
+This phase feeds the score below. Lower the D/L/C/P result when any of these holds: at least one `CONTRADICTS`; at least two `NOT FOUND`; or at least one `NUMBER`/`PERCENT`/`MULTIPLIER`/exact `TIMESPAN` that had to be rewritten as `[ADDED]` or removed.
 
 ## 6. D/L/C/P Scoring
 
@@ -173,7 +194,8 @@ Check for:
 - `Confirmation bias`: only supporting evidence was considered;
 - `Survivorship bias`: only successful or visible cases were analyzed;
 - `False mental model`: structure was assumed without checking data;
-- `False dichotomy`: the result says something "doesn't work" without evaluating trade-offs or extension points.
+- `False dichotomy`: the result says something "doesn't work" without evaluating trade-offs or extension points;
+- `Category error across roles or levels`: a single metric is aggregated across different roles or hierarchy levels ("the team did X%", "A handed off to B N times"). Before publishing such a metric, write out the role matrix explicitly - who, at which level, is responsible for what - and check the actual process or standard. Do not sum distinct roles into one number, and confirm the process even expects those two roles to interact at that point; otherwise the metric is meaningless.
 
 ## 8. Test Results
 
@@ -199,6 +221,8 @@ After source verification, run a final scan:
 
 If two or more signs appear, mark the artifact as requiring review.
 
+Also scan for revision lineage: traces of the editing process left inside the artifact itself - "previously X, now Y", "version rebuilt", "renamed", "main change". A finished artifact should read as if written from scratch and contain only its final state. Unless the file's purpose is to record changes (a changelog, an incident report, a rebuild plan, a journal), cut these traces and move any explanation of what changed into the reply to the user, not the file.
+
 ## 10. Placement Check
 
 For file-based work, check:
@@ -218,6 +242,25 @@ Example:
 - create with GPT, verify with Claude.
 
 The reviewing model must have access to the sources, not only the final artifact.
+
+## Subagent Self-Check Template
+
+When you delegate research, search, or extraction to a subagent, append this self-check to its prompt so unverified claims do not return as facts:
+
+```text
+Before returning, self-check your result:
+1. What is not covered? What did you fail to find?
+2. For every quote, give a concrete source (file + line or timestamp).
+   If you cannot, mark it [GAP: attribution not verified].
+3. For every number, state how you got it (count / rounding / eyeball estimate).
+   If it is an estimate, mark it [GAP: exact number not computed].
+   Do not present an estimate as a fact.
+4. Can the result be used as-is?
+5. Does it match the original request?
+6. What would refute your conclusion?
+7. Where did you rely on assumptions rather than facts?
+8. For data or code, show the actual output (3-5 real examples).
+```
 
 ## Output Format
 

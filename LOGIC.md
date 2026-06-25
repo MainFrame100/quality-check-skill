@@ -1,6 +1,7 @@
 # Quality Check Logic
 
-Last Updated: 2026-05-12
+Version: 1.1.0  
+Last Updated: 2026-06-25
 
 ## Why This Skill Exists
 
@@ -58,7 +59,7 @@ The agent inventories checkable claims and classifies them:
 
 - `NUMBER` - numbers, counts, intervals;
 - `PERCENT` - percentages and shares;
-- `MULTIPLIER` - "2x", "10x", "in many times";
+- `MULTIPLIER` - exact ("2x", "10x") and rhetorical ("several times", "much more", "drastically"). Rhetorical multipliers read as facts but carry no number, so they are the blind spot of sampling-based review and must be inventoried explicitly;
 - `TIMESPAN` - exact dates, durations, periods;
 - `QUOTE` - direct quotes and attributed phrases;
 - `COMPARISON` - better, worse, best, most important;
@@ -67,6 +68,10 @@ The agent inventories checkable claims and classifies them:
 - `AUTHORSHIP` - places where the user's own wording is expected.
 
 Numbers, percentages, exact dates, and exact time spans should be checked at 100 percent coverage. If a number has no source, it should be removed, rewritten, or marked as an interpretation.
+
+Two rules sharpen this. Auto-escalate: any claim that appears in the artifact's acceptance criteria, definition of done, or section headings is checked at 100 percent regardless of class - structural prominence outweighs a "load-bearing" judgment call. The 30-second rule: if the agent cannot name a concrete source for a number, percentage, multiplier, or exact time span within 30 seconds, it marks the claim as added or missing immediately rather than deferring it.
+
+In the final report, Source Verification is condensed to two lines: an inventory summary by class, and a discrepancies-only table that lists contradictions, not-found, and rewritten claims. Confirmed claims are not listed - they would bury the report.
 
 The expected source verdicts are:
 
@@ -108,7 +113,7 @@ Status-only statements are weak. Real stdout, examples, rows, or observed result
 
 ### 9. Hallucination Self-Diagnosis
 
-The agent does one final scan for unsupported precision, too-convenient facts, overconfident tone, and unsourced attribution.
+The agent does one final scan for unsupported precision, too-convenient facts, overconfident tone, and unsourced attribution. It also checks for revision lineage - traces of the editing process ("previously X, now Y", "version rebuilt", "renamed") left inside an artifact that is not itself a changelog. A finished artifact should read as if written from scratch and hold only its final state; the story of what changed belongs in the reply to the user, not in the file.
 
 ### 10. Placement / Section Check
 
@@ -151,3 +156,5 @@ For long artifacts:
 4. do not ask the model to verify more source material than it can hold in context.
 
 If the model cannot point to a source in 30 seconds, treat the claim as unsupported until proven otherwise.
+
+When work is delegated to a subagent, push the same discipline upstream: the skill includes a short self-check template to append to the subagent's prompt, forcing it to attribute every quote to a source and to flag any number it produced by estimate rather than by counting. This stops unverified claims from returning to the main agent already dressed as facts.
